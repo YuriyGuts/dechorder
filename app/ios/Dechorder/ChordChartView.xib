@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9059" systemVersion="15B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9049"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ChordChartView" customModule="Dechorder" customModuleProvider="target">
+            <connections>
+                <outlet property="chordChartImage" destination="8fe-ad-U1l" id="J0h-96-wv2"/>
+                <outlet property="chordNameLabel" destination="VHc-17-i4f" id="Wjq-03-et1"/>
+                <outlet property="contentView" destination="iN0-l3-epB" id="Vvk-yL-4Lm"/>
+                <outlet property="timeOffsetLabel" destination="VJ5-76-5vG" id="a5n-Hy-qX5"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="100" height="170"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chord_chart_Am" translatesAutoresizingMaskIntoConstraints="NO" id="8fe-ad-U1l" userLabel="Chord Chart Image">
+                    <rect key="frame" x="5" y="26" width="92" height="120"/>
+                    <animations/>
+                </imageView>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Am" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VHc-17-i4f" userLabel="Chord Name Label">
+                    <rect key="frame" x="37" y="0.0" width="26.5" height="20.5"/>
+                    <animations/>
+                    <fontDescription key="fontDescription" type="system" weight="medium" pointSize="17"/>
+                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="00:00" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VJ5-76-5vG" userLabel="Time Offset Label">
+                    <rect key="frame" x="32" y="151" width="36.5" height="16"/>
+                    <animations/>
+                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+            </subviews>
+            <animations/>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="8fe-ad-U1l" secondAttribute="trailing" constant="3" id="4YC-y4-8Hr"/>
+                <constraint firstItem="8fe-ad-U1l" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" constant="1" id="9Vd-bB-hKx"/>
+                <constraint firstItem="VHc-17-i4f" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="HfP-JN-mSH"/>
+                <constraint firstItem="VJ5-76-5vG" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="QAm-NO-YZs"/>
+                <constraint firstItem="8fe-ad-U1l" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="5" id="exd-wd-dM5"/>
+                <constraint firstItem="VHc-17-i4f" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="geE-6E-g89"/>
+                <constraint firstItem="8fe-ad-U1l" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="26" id="hq8-P4-Wnd"/>
+                <constraint firstAttribute="bottom" secondItem="VJ5-76-5vG" secondAttribute="bottom" constant="3" id="puj-FW-fB2"/>
+                <constraint firstAttribute="bottom" secondItem="8fe-ad-U1l" secondAttribute="bottom" constant="24" id="tXM-kt-hRr"/>
+            </constraints>
+            <nil key="simulatedStatusBarMetrics"/>
+            <nil key="simulatedTopBarMetrics"/>
+            <nil key="simulatedBottomBarMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <point key="canvasLocation" x="51.5" y="133.5"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="chord_chart_Am" width="92" height="120"/>
+    </resources>
+</document>

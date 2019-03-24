@@ -1,0 +1,10 @@
+# Uncomment this line to define a global platform for your project
+platform :ios, '10.0'
+# Uncomment this line if you're using Swift
+use_frameworks!
+
+target 'Dechorder' do
+    pod 'Alamofire', '~> 4.8.1'
+    pod 'AudioKit', '~> 4.6.2'
+    pod 'SwiftyJSON', '~> 4.0'
+end

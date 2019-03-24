@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="9057" systemVersion="15B42" minimumToolsVersion="Xcode 7.0">
+    <entity name="Chord" representedClassName=".Chord" syncable="YES">
+        <attribute name="confidence" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="timeOffset" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <relationship name="track" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Track" inverseName="chords" inverseEntity="Track" syncable="YES"/>
+    </entity>
+    <entity name="Track" representedClassName=".Track" syncable="YES">
+        <attribute name="artist" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="comments" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="creationDate" attributeType="Date" syncable="YES"/>
+        <attribute name="filename" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="chords" toMany="YES" deletionRule="Cascade" destinationEntity="Chord" inverseName="track" inverseEntity="Chord" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="Track" positionX="-63" positionY="-18" width="128" height="133"/>
+        <element name="Chord" positionX="196" positionY="153" width="128" height="103"/>
+    </elements>
+</model>
