@@ -1,0 +1,9 @@
+numpy==1.16.2
+pandas==0.24.2
+matplotlib==3.0.3
+jupyter==1.0.0
+librosa==0.6.3
+tqdm==4.31.1
+requests==2.21.0
+Flask==1.0.2
+pytest==4.3.1
