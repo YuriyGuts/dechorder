@@ -207,12 +207,10 @@ class NewRecordingTabController: UIViewController, AVAudioRecorderDelegate, EZMi
         
         microphone.startFetchingAudio()
         
-        // WAV, 11 kHz, 16 bit, mono.
+        // M4A, 22 kHz, 16 bit, mono.
         let recordingSettings = [
-            AVFormatIDKey: NSNumber(value: kAudioFormatLinearPCM),
-            AVLinearPCMIsFloatKey: false,
-            AVSampleRateKey: 11025.0,
-            AVLinearPCMBitDepthKey: 16,
+            AVFormatIDKey: NSNumber(value: kAudioFormatMPEG4AAC),
+            AVSampleRateKey: 22050.0,
             AVNumberOfChannelsKey: 1,
         ]
         

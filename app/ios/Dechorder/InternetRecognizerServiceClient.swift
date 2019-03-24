@@ -23,8 +23,8 @@ class InternetRecognizerServiceClient: RecognizerServiceClient {
                 multipartFormData.append(
                     audioFileURL,
                     withName: "audio-file",
-                    fileName: "audio.wav",
-                    mimeType: "audio/wav"
+                    fileName: "audio.m4a",
+                    mimeType: "audio/m4a"
                 )
             },
             to: _serviceURL,

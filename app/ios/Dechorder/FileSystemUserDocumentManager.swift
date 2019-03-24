@@ -4,7 +4,7 @@ class FileSystemUserDocumentManager: UserDocumentManager {
     
     func documentURLForNewTrack() -> URL? {
         let timestamp = Int64(NSDate().timeIntervalSince1970 * 1000)
-        let fileName = "recording-\(timestamp).wav"
+        let fileName = "recording-\(timestamp).m4a"
         return documentURL(forFileName: fileName)
     }
     
