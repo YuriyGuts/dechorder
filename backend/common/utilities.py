@@ -32,7 +32,7 @@ def extract_file_from_http_request(headers, body, upload_dir, unique_id=None):
     ----------
     headers : dict
         Request headers.
-    body : bytearray
+    body : bytes
         Raw request body.
     upload_dir: str
         Path to the folder for storing extracted files.
@@ -104,9 +104,4 @@ def extract_file_from_http_request(headers, body, upload_dir, unique_id=None):
         original_filename=original_filename,
         stored_filename=storage_path,
         mime_type=mime_type,
-        metadata={
-            'file_length': len(file_content),
-            'first_50_bytes': [hex(b) for b in file_content[:50]],
-            'last_50_bytes': [hex(b) for b in file_content[-50:]],
-        },
     )

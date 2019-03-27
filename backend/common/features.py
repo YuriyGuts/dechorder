@@ -72,7 +72,8 @@ def featurize_file(filename):
     try:
         signal, sample_rate = librosa.load(filename, sr=SUPPORTED_SAMPLE_RATE)
     except Exception as e:
-        raise KnownRequestParseError('Cannot load audio file. Error: ' + str(e) or type(e))
+        error_desc = str(e) or e.__class__.__name__
+        raise KnownRequestParseError('Cannot load audio file. Error: ' + error_desc)
 
     duration = len(signal) / sample_rate
 

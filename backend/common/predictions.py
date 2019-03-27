@@ -92,14 +92,14 @@ class DataRobotV1APIPredictionService(PredictionService):
 
     def predict(self, df):
         rows = df.to_dict(orient='records')
-        dr_payload = self._get_datarobot_predictions(rows)
+        dr_payload = self.get_datarobot_predictions(rows)
         result = [
-            self._get_label_and_confidence(row)
+            self.get_label_and_confidence(row)
             for row in dr_payload['data']
         ]
         return pd.DataFrame(result, columns=['name', 'confidence'])
 
-    def _get_datarobot_predictions(self, rows):
+    def get_datarobot_predictions(self, rows):
         url = f'{self.server}/predApi/v1.0/deployments/{self.deployment_id}/predictions'
         response = requests.post(
             url=url,
@@ -114,7 +114,7 @@ class DataRobotV1APIPredictionService(PredictionService):
             raise PredictionError(response.text)
         return response.json()
 
-    def _get_label_and_confidence(self, row):
+    def get_label_and_confidence(self, row):
         label = row['prediction']
         confidence = [
             val['value']
