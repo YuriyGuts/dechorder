@@ -14,21 +14,16 @@ import sys
 from flask import Flask, request, jsonify
 from flask.logging import default_handler
 
-from common.predictions import DummyPredictionService, DataRobotV1APIPredictionService
+from common.predictions import get_prediction_service
 from common.recognition import recognize_saved_file
+from common.utilities import ALLOWED_EXTENSIONS, KnownRequestParseError, UploadedFile
 
 
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = os.environ['FLASK_UPLOAD_FOLDER']
+app.config['PREDICTION_SERVICE'] = os.environ['DECHORDER_PREDICTION_SERVICE']
 
-# Folder for saving uploaded audio files.
-app.config['UPLOAD_FOLDER'] = 'upload'
 
-# Service for predicting chords.
-# - dummy: random predictions
-# - datarobot-v1: DataRobot V1 API predictions (environment variables required)
-app.config['PREDICTION_SERVICE'] = 'dummy'
-
-ALLOWED_EXTENSIONS = ['.wav', '.mp3', '.m4a']
 prediction_service = None
 
 
@@ -40,7 +35,7 @@ def bootstrap():
     default_handler.setFormatter(formatter)
 
     global prediction_service
-    prediction_service = get_prediction_service()
+    prediction_service = get_prediction_service(app.config['PREDICTION_SERVICE'])
 
 
 class RequestFormatter(logging.Formatter):
@@ -50,37 +45,50 @@ class RequestFormatter(logging.Formatter):
         return super().format(record)
 
 
-def get_prediction_service():
-    if app.config['PREDICTION_SERVICE'] == 'datarobot-v1':
-        return DataRobotV1APIPredictionService(
-            server=os.environ['DATAROBOT_SERVER'],
-            server_key=os.environ['DATAROBOT_SERVER_KEY'],
-            deployment_id=os.environ['DATAROBOT_DEPLOYMENT_ID'],
-            username=os.environ['DATAROBOT_USERNAME'],
-            api_token=os.environ['DATAROBOT_API_TOKEN'],
-        )
-    return DummyPredictionService()
-
-
-@app.route('/recognize', methods=['POST'])
-def recognize_file():
+def extract_uploaded_file():
     if 'audio-file' not in request.files:
-        return 'Expected "audio-file" parameter in request', 400
+        raise KnownRequestParseError('Expected a file with key "audio-file" in the request')
 
     audio_file = request.files['audio-file']
     if not audio_file:
-        return 'Audio data missing', 400
+        raise KnownRequestParseError('Audio file missing')
 
     name, ext = os.path.splitext(audio_file.filename)
     if ext.lower() not in ALLOWED_EXTENSIONS:
-        return f'Unsupported audio file format: {ext}', 400
+        msg = 'Only the following file extensions are supported: ' + ', '.join(ALLOWED_EXTENSIONS)
+        raise KnownRequestParseError(msg)
 
     filename = datetime.datetime.now().strftime('%Y%m%d-%H%M%S') + ext
     saved_audio_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     audio_file.save(saved_audio_path)
 
-    response_payload = recognize_saved_file(saved_audio_path, prediction_service)
-    return jsonify(response_payload)
+    return UploadedFile(
+        original_filename=audio_file.filename,
+        stored_filename=saved_audio_path,
+        mime_type=audio_file.content_type,
+    )
+
+
+def serve_error(message, status_code=500):
+    return jsonify({'message': message}), status_code
+
+
+def serve_ok(result_obj):
+    return jsonify(result_obj)
+
+
+@app.route('/recognize', methods=['POST'])
+def recognize_file():
+    try:
+        uploaded_file = extract_uploaded_file()
+        response_payload = recognize_saved_file(uploaded_file.stored_filename, prediction_service)
+        return serve_ok(response_payload)
+
+    except KnownRequestParseError as e:
+        return serve_error(str(e), 400)
+
+    except Exception as e:
+        return serve_error(str(e), 500)
 
 
 def main():

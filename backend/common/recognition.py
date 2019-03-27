@@ -2,6 +2,21 @@ from common.features import featurize_file
 
 
 def recognize_saved_file(path, prediction_service):
+    """
+    Recognize chords in the specified audio file.
+
+    Parameters
+    ----------
+    path : str
+        A path to the saved audio file.
+    prediction_service : PredictionService
+        A service used to make chord name predictions.
+
+    Returns
+    -------
+    list
+        A list of dictionaries, each with the keys: {'timeOffset', 'name', 'confidence'}.
+    """
     exclude_columns = ['time_offset', 'is_silent']
     df_features = featurize_file(path)
 
@@ -20,6 +35,19 @@ def recognize_saved_file(path, prediction_service):
 
 
 def remove_repeating_chords(chords):
+    """
+    Post-process the recognized chords, replacing identical adjacent chords with a single one.
+
+    Parameters
+    ----------
+    chords : list
+        List of recognized chords from `recognize_saved_file`
+
+    Returns
+    -------
+    list
+        A list in the identical format as the input list but with duplicates removed.
+    """
     result = []
     prev_chord = None
     for chord in chords:

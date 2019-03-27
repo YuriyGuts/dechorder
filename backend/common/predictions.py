@@ -1,21 +1,68 @@
 import abc
+import os
 
 import numpy as np
 import pandas as pd
 import requests
 
 
+def get_prediction_service(service_key):
+    """
+    Instantiates a prediction service by its key.
+
+    Parameters
+    ----------
+    service_key : str
+        The class name for the service.
+
+    Returns
+    -------
+    An instance of PredictionService
+    """
+    if service_key == 'DataRobotV1APIPredictionService':
+        return DataRobotV1APIPredictionService(
+            server=os.environ['DATAROBOT_SERVER'],
+            server_key=os.environ['DATAROBOT_SERVER_KEY'],
+            deployment_id=os.environ['DATAROBOT_DEPLOYMENT_ID'],
+            username=os.environ['DATAROBOT_USERNAME'],
+            api_token=os.environ['DATAROBOT_API_TOKEN'],
+        )
+    return DummyPredictionService()
+
+
 class PredictionService(object):
+    """
+    Abstract class for a service that can make chord predictions given audio features.
+    """
     @abc.abstractmethod
     def predict(self, df):
+        """
+        Predict chord labels with confidence.
+
+        Parameters
+        ----------
+        df : pandas.DataFrame
+            Input data frame with audio features.
+
+        Returns
+        -------
+        pandas.DataFrame
+            Prediction data frame with two columns: 'name', 'confidence'.
+        """
         pass
 
 
 class PredictionError(Exception):
+    """
+    Occurs when chord predictions cannot be made.
+    """
     pass
 
 
 class DummyPredictionService(PredictionService):
+    """
+    A chord prediction service that returns random chord predictions.
+    """
     def __init__(self, random_state=42):
         self.chord_names = [
             'C', 'D', 'E', 'F', 'G', 'A', 'B',
@@ -33,6 +80,9 @@ class DummyPredictionService(PredictionService):
 
 
 class DataRobotV1APIPredictionService(PredictionService):
+    """
+    A chord prediction service powered by DataRobot V1 API for model deployments.
+    """
     def __init__(self, server, server_key, deployment_id, username, api_token):
         self.server = server
         self.server_key = server_key
