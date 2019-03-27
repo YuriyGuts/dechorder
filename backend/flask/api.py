@@ -77,7 +77,7 @@ def serve_ok(result_obj):
     return jsonify(result_obj)
 
 
-@app.route('/recognize', methods=['POST'])
+@app.route('/api/recognize', methods=['POST'])
 def recognize_file():
     try:
         uploaded_file = extract_uploaded_file()

@@ -3,7 +3,7 @@ import SwiftyJSON
 
 class InternetRecognizerServiceClient: RecognizerServiceClient {
     
-    private let _serviceURL = "http://dechorder.yuriyguts.com/recognize"
+    private let _serviceURL = "https://dechorder.yuriyguts.com/api/recognize"
     
     private var _userDocumentManager: UserDocumentManager
     
