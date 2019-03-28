@@ -42,3 +42,20 @@ def prediction_payload(saved_audio_file):
     df = featurize_file(saved_audio_file)
     df = df.drop(columns=['time_offset', 'is_silent'])
     return df
+
+
+@pytest.fixture
+def boundary():
+    return b'----deadbeefdeadbeefdeadbeef'
+
+
+@pytest.fixture
+def body_with_valid_audio_file(boundary, saved_audio_file):
+    newline = b'\r\n'
+    body = b'--' + boundary + newline
+    body += b'Content-Disposition: form-data; name="audio-file"; filename="d-e-jazz.mp3"' + newline
+    body += b'Content-Type: audio/mp3' + newline
+    with open(saved_audio_file, 'rb') as f:
+        body += bytearray(f.read()) + newline
+    body += b'--' + boundary + b'--' + newline
+    return body

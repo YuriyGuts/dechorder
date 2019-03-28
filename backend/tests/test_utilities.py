@@ -12,25 +12,8 @@ def upload_dir():
 
 
 @pytest.fixture
-def boundary():
-    return b'----deadbeefdeadbeefdeadbeef'
-
-
-@pytest.fixture
 def valid_headers(boundary):
     return {'Content-Type': 'multipart/form-data; boundary=' + boundary.decode('utf-8')}
-
-
-@pytest.fixture
-def body_with_valid_audio_file(boundary, saved_audio_file):
-    newline = b'\r\n'
-    body = b'--' + boundary + newline
-    body += b'Content-Disposition: form-data; name="audio-file"; filename="d-e-jazz.mp3"' + newline
-    body += b'Content-Type: audio/mp3' + newline
-    with open(saved_audio_file, 'rb') as f:
-        body += bytearray(f.read()) + newline
-    body += b'--' + boundary + b'--' + newline
-    return body
 
 
 def test_extract_file(valid_headers, body_with_valid_audio_file, upload_dir):
