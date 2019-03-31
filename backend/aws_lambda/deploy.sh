@@ -1,36 +1,40 @@
 #!/usr/bin/env bash
 
+# ==================================================================
+# Deploys a previously built AWS Lambda artifact to production
+# ==================================================================
+
+# Name of AWSCLI profile to use.
 AWS_PROFILE=${AWS_PROFILE:-personal}
+
+# Intermediate S3 bucket used for uploading the package.
 S3_BUCKET=ygdata-private
 
-CURRENT_DIR=`pwd`
-SCRIPT=`realpath $0`
-LAMBDA_DIR=`dirname ${SCRIPT}`
-BUILD_DIR=${LAMBDA_DIR}/build
+# Path on the host machine where the package is stored.
+HOST_BUILD_DIR=$(pwd)/build
+
+# Name of the AWS Lambda artifact file.
 ARTIFACT_NAME=lambda_function.zip
-ARTIFACT_FULL_PATH=${BUILD_DIR}/${ARTIFACT_NAME}
 
-echo "Preparing build directory"
-rm -rf ${BUILD_DIR}
-mkdir -p ${BUILD_DIR}
-cd ${BUILD_DIR}
+# Name of the AWS Lambda function to update with this deployment.
+LAMBDA_FUNCTION_NAME=DechorderRecognize
 
-echo "Pulling 3rd-party dependencies for export"
-pip install -r ${LAMBDA_DIR}/requirements.txt --target .
-#find . | grep -E "(__pycache__|\.pyc|\.pyo$)" | xargs rm -rf
+# ==================================================================
+# End Config
+# ==================================================================
 
-echo "Creating deployment package"
-# 3rd-party pip packages.
-zip -r9 ${ARTIFACT_FULL_PATH} .
-# Common modules folder.
-cd ../..
-zip -r9 ${ARTIFACT_FULL_PATH} common
-# Main lambda function.
-zip -j9 ${ARTIFACT_FULL_PATH} ${LAMBDA_DIR}/lambda_function.py
+SCRIPT_PATH=`realpath $0`
+SCRIPT_DIR=`dirname ${SCRIPT_PATH}`
+ARTIFACT_FULL_PATH=${HOST_BUILD_DIR}/${ARTIFACT_NAME}
 
-echo "Uploading package to S3..."
+log_stage() {
+    local LINE=`printf '=%.0s' {1..70}`
+    local DATE=`date '+%Y-%m-%d %H:%M:%S'`
+    tput setaf 2; tput bold; echo ${LINE}; echo "[${DATE}] $1"; echo ${LINE}; tput sgr 0
+}
+
+log_stage "Uploading package to S3"
 aws s3 cp ${ARTIFACT_FULL_PATH} s3://${S3_BUCKET}/dechorder/${ARTIFACT_NAME}
-echo "Deploying package to Lambda..."
-aws lambda update-function-code --profile ${AWS_PROFILE} --function-name DechorderRecognize --s3-bucket ${S3_BUCKET} --s3-key dechorder/${ARTIFACT_NAME}
 
-cd $CURRENT_DIR
+log_stage "Deploying package to Lambda"
+aws lambda update-function-code --profile ${AWS_PROFILE} --function-name ${LAMBDA_FUNCTION_NAME} --s3-bucket ${S3_BUCKET} --s3-key dechorder/${ARTIFACT_NAME}
