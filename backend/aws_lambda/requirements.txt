@@ -1,5 +1,10 @@
+# Production packages that are used directly.
 numpy==1.16.2
 pandas==0.24.2
-llvmlite==0.25.0
 librosa==0.6.3
 requests==2.21.0
+
+# Packages that are not used directly but influence the build process significantly.
+numba==0.40.1        # Requires an exact version of llvmlite
+llvmlite==0.25.0     # Requires an exact version of LLVM
+scipy==1.1.0         # Newer versions require symbols from newer ATLAS/LAPACK libraries at runtime

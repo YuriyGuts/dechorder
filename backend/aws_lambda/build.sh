@@ -33,10 +33,10 @@ mkdir -p ${HOST_BUILD_DIR}
 
 log_stage "Copying build support files"
 mkdir -p ${HOST_BUILD_DIR}/include
-cp -r ${SCRIPT_DIR}/build-amazonlinux.sh ${HOST_BUILD_DIR}/
-cp -r ${SCRIPT_DIR}/../common ${HOST_BUILD_DIR}/include
-cp -r ${SCRIPT_DIR}/lambda_function.py ${HOST_BUILD_DIR}/include
-cp -r ${SCRIPT_DIR}/requirements.txt ${HOST_BUILD_DIR}/
+rsync -IPavz ${SCRIPT_DIR}/build-amazonlinux.sh ${HOST_BUILD_DIR}/
+rsync -IPavz ${SCRIPT_DIR}/../common ${HOST_BUILD_DIR}/include/
+rsync -IPavz ${SCRIPT_DIR}/lambda_function.py ${HOST_BUILD_DIR}/include/
+rsync -IPavz ${SCRIPT_DIR}/requirements.txt ${HOST_BUILD_DIR}/
 
 log_stage "Starting dockerized build"
 docker run -v ${HOST_BUILD_DIR}:${GUEST_BUILD_DIR} -it ${DOCKER_IMAGE} bash ${GUEST_BUILD_DIR}/build-amazonlinux.sh

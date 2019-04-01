@@ -114,27 +114,32 @@ python -m venv --copies dechorder-env
 source dechorder-env/bin/activate
 
 log_stage "Copying shared libraries to virtualenv"
-LIB_DIR="${VIRTUAL_ENV}/lib/python${PYTHON_VERSION}/site-packages/lib/"
-mkdir -p "${LIB_DIR}"
-cp -r /usr/lib64/atlas/* ${LIB_DIR}
-cp -r /usr/lib64/libquadmath.so.0 ${LIB_DIR}
-cp -r /usr/lib64/libgfortran.so.3 ${LIB_DIR}
+SITE_PACKAGES_DIR="${VIRTUAL_ENV}/lib/python${PYTHON_VERSION}/site-packages"
+SITE_PACKAGES_LIB_DIR="${SITE_PACKAGES_DIR}/lib/"
+mkdir -p "${SITE_PACKAGES_LIB_DIR}"
+rsync -LIPavz "/usr/lib64/atlas/" --include "*.so.3" --exclude "*" "${SITE_PACKAGES_LIB_DIR}/"
+rsync -LIPavz "/usr/lib64/libquadmath.so.0" "${SITE_PACKAGES_LIB_DIR}/"
+rsync -LIPavz "/usr/lib64/libgfortran.so.3" "${SITE_PACKAGES_LIB_DIR}/"
 
 log_stage "Installing Python packages"
 # Install packages to the current folder, without building wheels. Order is important.
 pip install --no-binary :all: -r ${BUILD_DIR}/requirements.txt
 
 log_stage "Copying FFmpeg binaries"
-cp -r ${FFMPEG_BIN_DIR}/ffmpeg ${VIRTUAL_ENV}/lib/python${PYTHON_VERSION}/site-packages/
-cp -r ${FFMPEG_BIN_DIR}/lame ${VIRTUAL_ENV}/lib/python${PYTHON_VERSION}/site-packages/
+rsync -IPavz "${FFMPEG_BIN_DIR}/ffmpeg" "${SITE_PACKAGES_DIR}/"
+rsync -IPavz "${FFMPEG_BIN_DIR}/lame" "${SITE_PACKAGES_DIR}/"
 
 log_stage "Copying additional modules from the host"
-cp -r ${BUILD_DIR}/include/* ${VIRTUAL_ENV}/lib/python${PYTHON_VERSION}/site-packages/
+rsync -IPavz "${BUILD_DIR}/include/" "${SITE_PACKAGES_DIR}/"
 
-# Remove symbols from .so files to reduce deployment package size.
 log_stage "Removing symbols from .so files to reduce deployment package size"
-find ${VIRTUAL_ENV}/lib/python${PYTHON_VERSION}/site-packages/ -name "*.so" | xargs strip
+find "${SITE_PACKAGES_DIR}/" -name "*.so" | xargs strip
+
+log_stage "Removing unnecessary files from pip packages to reduce deployment package size"
+find "${SITE_PACKAGES_DIR}/" -name "tests" -type d -prune -exec rm -rf "{}" +
+rm -rf "${SITE_PACKAGES_DIR}/joblib/test"
+rm -rf "${SITE_PACKAGES_DIR}/librosa/util/example_data/*"
 
 # Create Lambda deployment artifact by zipping up the packages in virtualenv.
 log_stage "Creating Lambda deployment package"
-pushd ${VIRTUAL_ENV}/lib/python${PYTHON_VERSION}/site-packages/ && zip -r -9 -q ${BUILD_DIR}/${ARTIFACT_NAME} * ; popd
+pushd "${SITE_PACKAGES_DIR}/" && zip -r -9 -q ${BUILD_DIR}/${ARTIFACT_NAME} * ; popd
