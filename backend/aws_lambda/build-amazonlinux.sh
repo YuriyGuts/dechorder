@@ -100,8 +100,7 @@ cd ${BUILD_DIR}/llvm
 svn co http://llvm.org/svn/llvm-project/llvm/tags/${LLVM_VERSION} source
 mkdir -p ${BUILD_DIR}/llvm/build
 cd ${BUILD_DIR}/llvm/build
-NUM_CPUS=$(cat /proc/cpuinfo | awk '/^processor/{print $3}' | wc -l)
-CMAKE_BUILD_VARS="-DCMAKE_BUILD_TYPE=MinSizeRel -DLLVM_TARGETS_TO_BUILD=X86 -DLLVM_INCLUDE_EXAMPLES=OFF -DLLVM_INCLUDE_BENCHMARKS=OFF -DLLVM_PARALLEL_COMPILE_JOBS=${NUM_CPUS} -DLLVM_PARALLEL_LINK_JOBS=${NUM_CPUS}"
+CMAKE_BUILD_VARS="-DCMAKE_BUILD_TYPE=MinSizeRel -DLLVM_TARGETS_TO_BUILD=X86 -DLLVM_INCLUDE_EXAMPLES=OFF -DLLVM_INCLUDE_BENCHMARKS=OFF"
 log_stage "[1/3] LLVM bootstrap"
 cmake ${CMAKE_BUILD_VARS} ${BUILD_DIR}/llvm/source
 log_stage "[2/3] LLVM build"
@@ -117,20 +116,20 @@ source dechorder-env/bin/activate
 log_stage "Copying shared libraries to virtualenv"
 LIB_DIR="${VIRTUAL_ENV}/lib/python${PYTHON_VERSION}/site-packages/lib/"
 mkdir -p "${LIB_DIR}"
-cp /usr/lib64/atlas/* ${LIB_DIR}
-cp /usr/lib64/libquadmath.so.0 ${LIB_DIR}
-cp /usr/lib64/libgfortran.so.3 ${LIB_DIR}
+cp -r /usr/lib64/atlas/* ${LIB_DIR}
+cp -r /usr/lib64/libquadmath.so.0 ${LIB_DIR}
+cp -r /usr/lib64/libgfortran.so.3 ${LIB_DIR}
 
 log_stage "Installing Python packages"
 # Install packages to the current folder, without building wheels. Order is important.
-pip install --no-binary :all: -r ${BUILD_DIR}/include/requirements.txt
+pip install --no-binary :all: -r ${BUILD_DIR}/requirements.txt
 
 log_stage "Copying FFmpeg binaries"
-cp ${FFMPEG_BIN_DIR}/ffmpeg ${VIRTUAL_ENV}/lib/python${PYTHON_VERSION}/site-packages/
-cp ${FFMPEG_BIN_DIR}/lame ${VIRTUAL_ENV}/lib/python${PYTHON_VERSION}/site-packages/
+cp -r ${FFMPEG_BIN_DIR}/ffmpeg ${VIRTUAL_ENV}/lib/python${PYTHON_VERSION}/site-packages/
+cp -r ${FFMPEG_BIN_DIR}/lame ${VIRTUAL_ENV}/lib/python${PYTHON_VERSION}/site-packages/
 
 log_stage "Copying additional modules from the host"
-cp ${BUILD_DIR}/include/* ${VIRTUAL_ENV}/lib/python${PYTHON_VERSION}/site-packages/
+cp -r ${BUILD_DIR}/include/* ${VIRTUAL_ENV}/lib/python${PYTHON_VERSION}/site-packages/
 
 # Remove symbols from .so files to reduce deployment package size.
 log_stage "Removing symbols from .so files to reduce deployment package size"
