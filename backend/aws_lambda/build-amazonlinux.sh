@@ -14,7 +14,7 @@ PYTHON_VERSION=3.7
 
 # Versions of low-level dependencies used for building Python packages.
 CMAKE_VERSION=3.14.1
-LLVM_VERSION=RELEASE_601/final
+LLVM_VERSION=RELEASE_701/final
 
 # ==================================================================
 # End Config
@@ -133,10 +133,10 @@ log_stage "Copying additional modules from the host"
 rsync -IPavz "${BUILD_DIR}/include/" "${SITE_PACKAGES_DIR}/"
 
 log_stage "Removing symbols from .so files to reduce deployment package size"
-find "${SITE_PACKAGES_DIR}/" -name "*.so" | xargs strip
+find "${SITE_PACKAGES_DIR}/" -name "*.so" -exec echo "{}" \; -exec strip "{}" \;
 
 log_stage "Removing unnecessary files from pip packages to reduce deployment package size"
-find "${SITE_PACKAGES_DIR}/" -name "tests" -type d -prune -exec rm -rf "{}" +
+find "${SITE_PACKAGES_DIR}/" -name "tests" -type d -prune -exec echo "{}" \; -exec rm -rf "{}" \;
 rm -rf "${SITE_PACKAGES_DIR}/joblib/test"
 rm -rf "${SITE_PACKAGES_DIR}/librosa/util/example_data/*"
 
