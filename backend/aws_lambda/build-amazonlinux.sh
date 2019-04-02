@@ -115,7 +115,9 @@ source dechorder-env/bin/activate
 
 log_stage "Copying shared libraries to virtualenv"
 SITE_PACKAGES_DIR="${VIRTUAL_ENV}/lib/python${PYTHON_VERSION}/site-packages"
-SITE_PACKAGES_LIB_DIR="${SITE_PACKAGES_DIR}/lib/"
+SITE_PACKAGES_BIN_DIR="${SITE_PACKAGES_DIR}/bin"
+SITE_PACKAGES_LIB_DIR="${SITE_PACKAGES_DIR}/lib"
+mkdir -p "${SITE_PACKAGES_BIN_DIR}"
 mkdir -p "${SITE_PACKAGES_LIB_DIR}"
 rsync -LIPavz "/usr/lib64/atlas/" --include "*.so.3" --exclude "*" "${SITE_PACKAGES_LIB_DIR}/"
 rsync -LIPavz "/usr/lib64/libquadmath.so.0" "${SITE_PACKAGES_LIB_DIR}/"
@@ -126,8 +128,8 @@ log_stage "Installing Python packages"
 pip install --no-binary :all: -r ${BUILD_DIR}/requirements.txt
 
 log_stage "Copying FFmpeg binaries"
-rsync -IPavz "${FFMPEG_BIN_DIR}/ffmpeg" "${SITE_PACKAGES_DIR}/"
-rsync -IPavz "${FFMPEG_BIN_DIR}/lame" "${SITE_PACKAGES_DIR}/"
+rsync -IPavz "${FFMPEG_BIN_DIR}/ffmpeg" "${SITE_PACKAGES_BIN_DIR}/"
+rsync -IPavz "${FFMPEG_BIN_DIR}/lame" "${SITE_PACKAGES_BIN_DIR}/"
 
 log_stage "Copying additional modules from the host"
 rsync -IPavz "${BUILD_DIR}/include/" "${SITE_PACKAGES_DIR}/"
