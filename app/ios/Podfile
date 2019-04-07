@@ -5,6 +5,6 @@ use_frameworks!
 
 target 'Dechorder' do
     pod 'Alamofire', '~> 4.8.1'
-    pod 'AudioKit', '~> 4.6.2'
+    pod 'AudioKit', '~> 4.7.0'
     pod 'SwiftyJSON', '~> 4.0'
 end
