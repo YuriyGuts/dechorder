@@ -2,6 +2,9 @@
 
 Automatic chord recognition application
 
+![image](https://user-images.githubusercontent.com/2750531/55685970-9ac95c00-5964-11e9-9fa0-55d7d805f85f.png)
+
+
 ## Overall Architecture
 
 1. User records an audio sample using a microphone on an iOS device.
@@ -16,6 +19,14 @@ Automatic chord recognition application
 2. Server:
    * Python Flask application, or
    * AWS Lambda function running behind an AWS API Gateway
+
+## Development
+
+Not all dependencies are required for all development tasks but the complete list of additional components is provided below:
+
+1. App: CocoaPods + Swift packages from `Podfile`.
+2. Backend: FFmpeg + Python packages from `requirements.txt`.
+3. Data preparation tools: `sox`.
 
 ## Building
 
