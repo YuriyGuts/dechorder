@@ -87,7 +87,6 @@ PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./configure \
   --extra-libs=-lpthread \
   --extra-libs=-lm \
   --bindir="${FFMPEG_BIN_DIR}" \
-  --enable-gpl \
   --enable-libmp3lame \
   --enable-nonfree
 make
