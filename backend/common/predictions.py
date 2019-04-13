@@ -1,9 +1,13 @@
 import abc
+import logging
 import os
 
 import numpy as np
 import pandas as pd
 import requests
+
+
+logger = logging.getLogger(__name__)
 
 
 def get_prediction_service(service_key):
@@ -71,6 +75,7 @@ class DummyPredictionService(PredictionService):
         self.rng = np.random.RandomState(random_state)
 
     def predict(self, df):
+        logger.info(f'Using dummy prediction service on data shape {df.shape}')
         names = self.rng.choice(self.chord_names, size=len(df))
         confidences = self.rng.uniform(low=0.0, high=1.0, size=len(df))
         return pd.DataFrame({
@@ -91,6 +96,7 @@ class DataRobotV1APIPredictionService(PredictionService):
         self.api_token = api_token
 
     def predict(self, df):
+        logger.info(f'Using DataRobot V1 prediction service on data shape {df.shape}')
         rows = df.to_dict(orient='records')
         dr_payload = self.get_datarobot_predictions(rows)
         result = [
@@ -100,6 +106,7 @@ class DataRobotV1APIPredictionService(PredictionService):
         return pd.DataFrame(result, columns=['name', 'confidence'])
 
     def get_datarobot_predictions(self, rows):
+        logger.info(f'Requesting DataRobot predictions for {len(rows)} rows')
         url = f'{self.server}/predApi/v1.0/deployments/{self.deployment_id}/predictions'
         response = requests.post(
             url=url,
@@ -110,6 +117,7 @@ class DataRobotV1APIPredictionService(PredictionService):
                 'datarobot-key': self.server_key,
             }
         )
+        logger.info(f'DataRobot response code: {response.status_code}')
         if response.status_code != 200:
             raise PredictionError(response.text)
         return response.json()

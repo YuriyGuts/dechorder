@@ -1,6 +1,10 @@
 import json
+import logging
 import os
 import uuid
+
+
+logger = logging.getLogger(__name__)
 
 
 ALLOWED_EXTENSIONS = ['.wav', '.mp3', '.m4a']
@@ -62,19 +66,23 @@ def extract_file_from_http_request(headers, body, upload_dir, unique_id=None):
     try:
         file_part = body.split(initial_delimiter)[1].split(final_delimiter)[0]
     except Exception:
+        logger.warning('Failed to parse the raw multipart body', exc_info=True)
         raise KnownRequestParseError('Expected a non-empty multipart/form-data body')
 
     # Separate Content-Disposition, Content-Type (optional), and file content.
     file_part_lines = [line for line in file_part.split(newline) if line]
-    cdisp_line = file_part_lines[0].decode('utf-8')
-    ctype_line = file_part_lines[1]
+    cdisp_line = None
+    ctype_line = None
+    file_content = None
 
-    if ctype_line.startswith(b'Content-Type'):
-        mime_type = ctype_line.decode('utf-8').replace('Content-Type: ', '')
-        file_content = newline.join([line for line in file_part_lines[2:]])
-    else:
-        mime_type = 'text/plain'
-        file_content = newline.join([line for line in file_part_lines[1:]])
+    for i, line in enumerate(file_part_lines):
+        if line.startswith(b'Content-Disposition'):
+            cdisp_line = line.decode('utf-8')
+        elif line.startswith(b'Content-Type'):
+            ctype_line = line.decode('utf-8')
+        else:
+            file_content = newline.join([fpl for fpl in file_part_lines[i:]])
+            break
 
     # Parse Content-Disposition to extract parameter name and original filename.
     cdisp_line = cdisp_line.replace('; name=', '"name": ')
@@ -83,6 +91,7 @@ def extract_file_from_http_request(headers, body, upload_dir, unique_id=None):
     try:
         content_disposition = json.loads(cdisp_line)
     except Exception:
+        logger.warning(f'Failed to parse Content-Disposition line: {cdisp_line}', exc_info=True)
         raise KnownRequestParseError('Malformed request body')
 
     # Check if the request form is valid.
@@ -91,12 +100,16 @@ def extract_file_from_http_request(headers, body, upload_dir, unique_id=None):
 
     original_filename = content_disposition['filename']
     original_extension = os.path.splitext(original_filename)[1].lower()
+    mime_type = ctype_line.replace('Content-Type: ', '') if ctype_line else 'text/plain'
+    logger.info(f'Original filename: "{original_filename}". Inferred MIME type: {mime_type}')
+
     if original_extension not in ALLOWED_EXTENSIONS:
         msg = 'Only the following file extensions are supported: ' + ', '.join(ALLOWED_EXTENSIONS)
         raise KnownRequestParseError(msg)
 
     # Save the file to disk.
     storage_path = os.path.join(upload_dir, f'{unique_id}{original_extension}')
+    logger.info('Saving uploaded file ({} bytes) to: "{}"'.format(len(file_content), storage_path))
     with open(storage_path, 'wb') as f:
         f.write(file_content)
 

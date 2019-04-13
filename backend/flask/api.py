@@ -28,11 +28,11 @@ prediction_service = None
 
 
 def bootstrap():
-    formatter = RequestFormatter(
-        '[%(asctime)s] %(remote_addr)s requested %(url)s\n'
-        '%(levelname)s in %(module)s: %(message)s'
-    )
-    default_handler.setFormatter(formatter)
+    del app.logger.handlers[:]
+    logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
+    default_handler.setLevel(logging.INFO)
+    logger.addHandler(default_handler)
 
     global prediction_service
     prediction_service = get_prediction_service(app.config['PREDICTION_SERVICE'])
@@ -61,6 +61,8 @@ def extract_uploaded_file():
     filename = datetime.datetime.now().strftime('%Y%m%d-%H%M%S') + ext
     saved_audio_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     audio_file.save(saved_audio_path)
+    file_size = os.stat(saved_audio_path).st_size
+    app.logger.info(f'Saving uploaded file ({file_size} bytes) to: "{saved_audio_path}"')
 
     return UploadedFile(
         original_filename=audio_file.filename,
@@ -82,12 +84,15 @@ def recognize_file():
     try:
         uploaded_file = extract_uploaded_file()
         response_payload = recognize_saved_file(uploaded_file.stored_filename, prediction_service)
+        app.logger.info(f'Recognition successful, returning {len(response_payload)} records')
         return serve_ok(response_payload)
 
     except KnownRequestParseError as e:
+        app.logger.info(f'Recognition failed, returning user error: {str(e)}')
         return serve_error(str(e), 400)
 
     except Exception as e:
+        app.logger.info(f'Recognition failed, returning internal error: {str(e)}')
         return serve_error(str(e), 500)
 
 

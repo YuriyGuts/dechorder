@@ -1,9 +1,13 @@
+import logging
+
 import librosa
 import numpy as np
 import pandas as pd
 
-
 from common.utilities import KnownRequestParseError
+
+
+logger = logging.getLogger(__name__)
 
 
 # Resample all uploaded files to this sample rate. Ideally, should match the SR used for training.
@@ -70,15 +74,19 @@ def featurize_file(filename):
         A data frame with extracted audio features, one line for each SECONDS_PER_CHUNK seconds.
     """
     try:
+        logger.info(f'Reading audio file: "{str(filename)}"')
         signal, sample_rate = librosa.load(filename, sr=SUPPORTED_SAMPLE_RATE)
     except Exception as e:
         error_desc = str(e) or e.__class__.__name__
         raise KnownRequestParseError('Cannot load audio file. Error: ' + error_desc)
 
     duration = len(signal) / sample_rate
+    logger.info(f'File duration: {duration:.1f} seconds')
 
     spectrogram = np.abs(librosa.stft(signal))
     spectrogram_per_second = spectrogram.shape[1] / duration
+    logger.info(f'Spectrogram shape: {spectrogram.shape}')
+
     rms = librosa.feature.rms(S=spectrogram).T.ravel()
     chroma = librosa.feature.chroma_stft(S=spectrogram, sr=sample_rate)
     adaptive_rms_threshold = np.percentile(rms, ADAPTIVE_SILENCE_RMS_PERCENTILE)
@@ -91,6 +99,7 @@ def featurize_file(filename):
     time_markers = np.arange(0, len(chroma_chunks)) * SECONDS_PER_CHUNK
 
     # Featurize each chunk, detect silence, and store the results as a DataFrame row.
+    logger.info('Generating features')
     features = [
         featurize_chroma_chunk(chunk)
         for chunk in chroma_chunks

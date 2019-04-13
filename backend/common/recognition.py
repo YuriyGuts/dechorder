@@ -1,4 +1,9 @@
+import logging
+
 from common.features import featurize_file
+
+
+logger = logging.getLogger(__name__)
 
 
 def recognize_saved_file(path, prediction_service):
@@ -17,20 +22,28 @@ def recognize_saved_file(path, prediction_service):
     list
         A list of dictionaries, each with the keys: {'timeOffset', 'name', 'confidence'}.
     """
+    logger.info(f'Starting recognition of: "{path}"')
     exclude_columns = ['time_offset', 'is_silent']
     df_features = featurize_file(path)
+    logger.info(f'Featurized data shape: {df_features.shape}')
 
     # Prepare dataset for predictions. This involves removing features we use for internal purposes.
     df_features_not_silent = df_features[~df_features['is_silent']]
     df_features_pred = df_features_not_silent.drop(columns=exclude_columns)
+    logger.info(f'Non-silent data shape: {df_features_not_silent.shape}')
+
+    # Request predictions.
     df_predictions = prediction_service.predict(df_features_pred)
 
     # Attach some of the information we removed earlier.
     df_predictions['time_offset'] = df_features_not_silent.reset_index(drop=True)['time_offset']
 
-    # Final smoothing and post-processing.
+    # Final smoothing and postprocessing.
+    logger.info('Postprocessing started')
     result = df_predictions.rename(columns={'time_offset': 'timeOffset'}).to_dict(orient='records')
     result = remove_repeating_chords(result)
+    logger.info('Postprocessing finished')
+
     return result
 
 

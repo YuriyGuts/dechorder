@@ -13,6 +13,7 @@ export DATAROBOT_API_TOKEN="<ENTER-API-TOKEN-HERE>"
 
 # Flask parameters
 export FLASK_APP=api.py
+export FLASK_ENV=development
 export FLASK_RUN_HOST=127.0.0.1
 export FLASK_RUN_PORT=5000
 export FLASK_UPLOAD_FOLDER=upload
