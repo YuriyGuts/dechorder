@@ -1,15 +1,16 @@
 # Dechorder
 
-Automatic chord recognition application
+Automatic chord recognition application powered by machine learning.
 
 ![image](https://user-images.githubusercontent.com/2750531/55685970-9ac95c00-5964-11e9-9fa0-55d7d805f85f.png)
 
 
-## Overall Architecture
+## Overall Flow
 
 1. User records an audio sample using a microphone on an iOS device.
 2. The raw audio file is sent to the backend API (via HTTP file upload) for recognition.
-3. The backend extracts features from the uploaded audio file and predicts chords in the file. An external machine learning service like DataRobot can be used for predictions depending on the configuration.
+3. The backend extracts features from the uploaded audio file and predicts chords in the file. Either a built-in model
+   or an external machine learning service like DataRobot can be used for predictions depending on the configuration.
 4. Chord annotations (time marker, chord name, confidence) are sent back from the API to the client.
 5. The client app provides the user with a playback interface and allows fast-forwarding to particular chords.
 
@@ -83,9 +84,10 @@ Due to the factors above, the actual build is performed inside a Docker containe
     * Customize the `PATH` environment variable to include the `bin` folder from the package: 
       - `PATH`: `/var/task/bin:/var/lang/bin:/usr/local/bin:/usr/bin/:/bin:/opt/bin`
     * Customize the `DECHORDER_PREDICTION_SERVICE` environment variable:
-      - For random predictions, use `DummyPredictionService`
-      - For DataRobot V1 predictions, use `DataRobotV1APIPredictionService`
-    * For using DataRobot V1 predictions, customize the following environment variables:
+      - For random predictions, specify `DummyPredictionService`
+      - For using the built-in neural network classifier, specify `EmbeddedPredictionService`
+      - For DataRobot Prediction API v1.0, specify `DataRobotV1APIPredictionService`
+    * For using DataRobot Prediction API v1.0, you need a DataRobot account. Customize the following environment variables as well:
       - `DATAROBOT_SERVER`
       - `DATAROBOT_SERVER_KEY`
       - `DATAROBOT_DEPLOYMENT_ID`

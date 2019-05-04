@@ -1,6 +1,7 @@
 # Development packages that are used directly.
 numpy==1.16.2
 pandas==0.24.2
+scikit-learn==0.20.3
 matplotlib==3.0.3
 jupyter==1.0.0
 librosa==0.6.3

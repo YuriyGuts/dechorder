@@ -3,7 +3,9 @@ import os
 import pytest
 
 from common.features import featurize_file
-from common.predictions import DummyPredictionService, DataRobotV1APIPredictionService
+from common.predictions.datarobot import DataRobotV1APIPredictionService
+from common.predictions.dummy import DummyPredictionService
+from common.predictions.embedded import EmbeddedPredictionService
 
 
 @pytest.fixture
@@ -35,6 +37,11 @@ def datarobot_v1_service():
         username='datarobot-username',
         api_token='datarobot-api-token',
     )
+
+
+@pytest.fixture
+def embedded_service():
+    return EmbeddedPredictionService()
 
 
 @pytest.fixture
