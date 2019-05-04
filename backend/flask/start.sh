@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
 # DummyPredictionService: random predictions
-# DataRobotV1APIPredictionService: DataRobot V1 predictions
-export DECHORDER_PREDICTION_SERVICE=DummyPredictionService
+# DataRobotV1APIPredictionService: DataRobot Prediction API v1.0 predictions
+# EmbeddedPredictionService: predictions from a built-in neural network
+export DECHORDER_PREDICTION_SERVICE=EmbeddedPredictionService
 
 # DataRobot parameters
 export DATAROBOT_SERVER="https://<ENTER-URL-HERE>.datarobot.com"
