@@ -55,7 +55,7 @@ mkdir -p ${FFMPEG_BUILD_DIR}
 mkdir -p ${FFMPEG_SOURCE_DIR}
 export PATH="${FFMPEG_BIN_DIR}:$PATH"
 
-log_stage "[1/3] Build NASM"
+log_stage "[1/2] Build NASM"
 cd ${FFMPEG_SOURCE_DIR}
 curl -O -L https://www.nasm.us/pub/nasm/releasebuilds/2.14.02/nasm-2.14.02.tar.bz2
 tar xjvf nasm-2.14.02.tar.bz2
@@ -65,16 +65,7 @@ cd nasm-2.14.02
 make
 make install
 
-log_stage "[2/3] Build LAME"
-cd ${FFMPEG_SOURCE_DIR}
-curl -O -L https://downloads.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz
-tar xzvf lame-3.100.tar.gz
-cd lame-3.100
-./configure --prefix="${FFMPEG_BUILD_DIR}" --bindir="${FFMPEG_BIN_DIR}" --disable-shared --enable-nasm
-make
-make install
-
-log_stage "[3/3] Build FFmpeg"
+log_stage "[2/2] Build FFmpeg"
 cd ${FFMPEG_SOURCE_DIR}
 curl -O -L https://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2
 tar xjvf ffmpeg-snapshot.tar.bz2
@@ -87,7 +78,6 @@ PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./configure \
   --extra-libs=-lpthread \
   --extra-libs=-lm \
   --bindir="${FFMPEG_BIN_DIR}" \
-  --enable-libmp3lame \
   --enable-nonfree
 make
 make install
@@ -128,7 +118,6 @@ pip install --no-binary :all: -r ${BUILD_DIR}/requirements.txt
 
 log_stage "Copying FFmpeg binaries"
 rsync -IPavz "${FFMPEG_BIN_DIR}/ffmpeg" "${SITE_PACKAGES_BIN_DIR}/"
-rsync -IPavz "${FFMPEG_BIN_DIR}/lame" "${SITE_PACKAGES_BIN_DIR}/"
 
 log_stage "Copying additional modules from the host"
 rsync -IPavz "${BUILD_DIR}/include/" "${SITE_PACKAGES_DIR}/"

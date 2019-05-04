@@ -25,9 +25,10 @@ Automatic chord recognition application powered by machine learning.
 
 Not all dependencies are required for all development tasks but the complete list of additional components is provided below:
 
-1. App: CocoaPods + Swift packages from `Podfile`.
+1. iOS App: CocoaPods + Swift packages from `Podfile`.
 2. Backend: FFmpeg + Python packages from `requirements.txt`.
 3. Data preparation tools: `sox`.
+4. AWS Lambda deployment: `awscli`.
 
 ## Building
 
@@ -64,7 +65,7 @@ Due to the factors above, the actual build is performed inside a Docker containe
 ### Server: AWS Lambda
 
 1. Install Docker.
-2. Run the following (should take an hour or more to run):
+2. Run the following (might take a few hours to run):
 
     ```bash
     $ cd backend/aws_lambda
