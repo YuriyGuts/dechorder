@@ -71,6 +71,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", privileged: true, inline: <<-SHELL
     apt-get update
     apt-get install -y mc zip git python3 python3-setuptools python3-wheel python3-pip python3-venv
+    apt-get install -y libxcb-shm0 libxcb-shape0 libxcb-xfixes0
     pip3 install --upgrade pip awscli
   SHELL
 

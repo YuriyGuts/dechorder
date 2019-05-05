@@ -77,8 +77,7 @@ PKG_CONFIG_PATH="$HOME/ffmpeg_build/lib/pkgconfig" ./configure \
   --extra-ldflags="-L${FFMPEG_BUILD_DIR}/lib" \
   --extra-libs=-lpthread \
   --extra-libs=-lm \
-  --bindir="${FFMPEG_BIN_DIR}" \
-  --enable-nonfree
+  --bindir="${FFMPEG_BIN_DIR}"
 make
 make install
 hash -d ffmpeg
