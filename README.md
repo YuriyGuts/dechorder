@@ -2,6 +2,8 @@
 
 Automatic chord recognition application powered by machine learning.
 
+[Demo video on YouTube](https://www.youtube.com/watch?v=0i5GQrWegGI)
+
 ![image](https://user-images.githubusercontent.com/2750531/55685970-9ac95c00-5964-11e9-9fa0-55d7d805f85f.png)
 
 
