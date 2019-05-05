@@ -48,8 +48,8 @@ def featurize_audio_segment(chroma):
 def featurize_file(audio_filename, label_filename):
     df_labels = pd.read_csv(label_filename)
     y, sr = librosa.load(audio_filename)
-    S = np.abs(librosa.stft(y))
-    chroma = librosa.feature.chroma_stft(S=S, sr=sr)
+    spectrogram = np.abs(librosa.stft(y))
+    chroma = librosa.feature.chroma_stft(S=spectrogram, sr=sr)
 
     file_duration = len(y) / sr
     chroma_per_second = chroma.shape[1] / file_duration

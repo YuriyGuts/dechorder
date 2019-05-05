@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Batch convert audio files to a standardized efficient format that can
-be read by audio feature engineering components (MP3, 11 kHz, 16 bit, mono).
+be read by audio feature engineering components (MP3, 22 kHz, 16 bit, mono).
 
 Requires sox to be installed (apt install sox / brew install sox)
 
@@ -52,6 +52,7 @@ def main():
     print(f'Collected {len(filenames)} files')
     for input_filename in filenames:
         convert_file(input_filename)
+
 
 if __name__ == '__main__':
     main()

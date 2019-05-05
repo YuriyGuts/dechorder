@@ -47,7 +47,8 @@ class DataRobotV1APIPredictionService(PredictionService):
             raise PredictionError(response.text)
         return response.json()
 
-    def get_label_and_confidence(self, row):
+    @staticmethod
+    def get_label_and_confidence(row):
         label = row['prediction']
         confidence = [
             val['value']

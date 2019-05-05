@@ -29,7 +29,11 @@ def main():
     for chord_ix, chord_name in enumerate(CHORD_NAMES):
         for bar_ix in range(BARS_PER_CHORD):
             for segment in SEGMENTS_IN_CHORD:
-                seconds_start = chord_ix * BARS_PER_CHORD * SECONDS_PER_BAR + bar_ix * SECONDS_PER_BAR + segment[0]
+                seconds_start = (
+                    chord_ix * BARS_PER_CHORD * SECONDS_PER_BAR
+                    + bar_ix * SECONDS_PER_BAR
+                    + segment[0]
+                )
                 seconds_end = seconds_start + (segment[1] - segment[0])
                 rows.append([seconds_start, seconds_end, chord_name])
 

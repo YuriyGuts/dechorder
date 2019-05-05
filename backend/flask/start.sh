@@ -19,7 +19,7 @@ export FLASK_RUN_HOST=127.0.0.1
 export FLASK_RUN_PORT=5000
 export FLASK_UPLOAD_FOLDER=upload
 
-export PYTHONPATH="$(dirname "$(pwd)")":$PYTHONPATH
+export PYTHONPATH="$(dirname "$(pwd)")":${PYTHONPATH}
 
-mkdir -p $FLASK_UPLOAD_FOLDER
+mkdir -p ${FLASK_UPLOAD_FOLDER}
 flask run
