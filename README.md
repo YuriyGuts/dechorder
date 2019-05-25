@@ -36,7 +36,7 @@ Not all dependencies are required for all development tasks but the complete lis
 
 ### Client: iOS App
 
-The initial version of the app was built using Swift 2 and XCode 7, then upgraded to Swift 4.2 and XCode 10, with up-to-date CocoaPods packages at the time of writing.
+The initial version of the app was built using Swift 2 and XCode 7, then upgraded to Swift 5 and XCode 10, with up-to-date CocoaPods packages at the time of writing.
 
 ### Server: AWS Lambda
 
@@ -44,8 +44,8 @@ An AWS Lambda deployment package for Dechorder is extremely tricky to build, due
 
 1. **Specific runtime environment**. At the time of writing this, [AWS Lambda execution environment](https://docs.aws.amazon.com/lambda/latest/dg/current-supported-versions.html) includes the following:
     * Operating system – Amazon Linux.
-    * AMI – `amzn-ami-hvm-2017.03.1.20170812-x86_64-gp2`
-    * Linux kernel – `4.14.77-70.59.amzn1.x86_64`
+    * AMI – `amzn-ami-hvm-2018.03.0.20181129-x86_64-gp2`
+    * Linux kernel – `4.14.94-73.73.amzn1.x86_64`
     * Python 3.7 SDK – `boto3-1.9.42 botocore-1.12.42`
 
 2. **Binary dependencies**. Scientific libraries used in feature engineering require low-level linear algebra libraries, binary utilities, and JIT compilation, tailored to the specific runtime mentioned above. For example:
@@ -84,7 +84,7 @@ Due to the factors above, the actual build is performed inside a Docker containe
 
 5. Your code (`lambda_function.zip`) should now be uploaded to an S3 bucket and deployed to AWS Lambda.
 6. Configure the lambda function in AWS Management Console:
-    * Customize the `PATH` environment variable to include the `bin` folder from the package: 
+    * Customize the `PATH` environment variable to include the `bin` folder from the package:
       - `PATH`: `/var/task/bin:/var/lang/bin:/usr/local/bin:/usr/bin/:/bin:/opt/bin`
     * Customize the `DECHORDER_PREDICTION_SERVICE` environment variable:
       - For random predictions, specify `DummyPredictionService`
