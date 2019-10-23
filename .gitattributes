@@ -1,0 +1,2 @@
+# Don't let a small Jupyter notebook with charts skew the language stats for the whole repo.
+**/*.ipynb linguist-language=Python
