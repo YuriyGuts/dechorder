@@ -3,7 +3,7 @@ numpy==1.16.2
 pandas==0.24.2
 scikit-learn==0.20.3
 librosa==0.6.3
-requests==2.21.0
+requests==2.31.0
 
 # Packages that are not used directly but influence the build process significantly.
 numba==0.43.1        # Requires an exact version of llvmlite
